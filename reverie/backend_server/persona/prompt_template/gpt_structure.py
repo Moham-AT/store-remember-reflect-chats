@@ -7,6 +7,7 @@ Description: Wrapper functions for calling OpenAI APIs.
 import json
 import random
 import openai
+from openai import OpenAI
 import time 
 
 from utils import *
