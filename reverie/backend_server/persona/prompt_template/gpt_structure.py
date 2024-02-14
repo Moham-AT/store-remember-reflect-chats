@@ -11,28 +11,32 @@ import time
 
 from utils import *
 
-openai.api_key = openai_api_key
+openai.api_key = together_api_key
 
 def temp_sleep(seconds=0.1):
   time.sleep(seconds)
 
 def ChatGPT_single_request(prompt): 
   temp_sleep()
-
-  completion = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo", 
+  
+  client = openai.OpenAI(
+    api_key,
+    base_url="https://api.together.xyz/v1",
+    )
+  completion = client.chat.completions.create(
+    model="Qwen/Qwen1.5-72B-Chat", 
     messages=[{"role": "user", "content": prompt}]
   )
-  return completion["choices"][0]["message"]["content"]
+  return completion.choices[0].message.content
 
 
 # ============================================================================
-# #####################[SECTION 1: CHATGPT-3 STRUCTURE] ######################
+# #####################[SECTION 1: Mistral STRUCTURE] ######################
 # ============================================================================
 
-def GPT4_request(prompt): 
+def Mistral_request(prompt): 
   """
-  Given a prompt and a dictionary of GPT parameters, make a request to OpenAI
+  Given a prompt and a dictionary of Mistral parameters, make a request to OpenAI
   server and returns the response. 
   ARGS:
     prompt: a str prompt
@@ -40,20 +44,24 @@ def GPT4_request(prompt):
                    the parameter and the values indicating the parameter 
                    values.   
   RETURNS: 
-    a str of GPT-3's response. 
+    a str of Mistral's response. 
   """
   temp_sleep()
 
   try: 
-    completion = openai.ChatCompletion.create(
-    model="gpt-4", 
-    messages=[{"role": "user", "content": prompt}]
+    client = openai.OpenAI(
+      api_key,
+      base_url="https://api.together.xyz/v1",
+      )
+    completion = client.chat.completions.create(
+      model="mistralai/Mixtral-8x7B-Instruct-v0.1", 
+      messages=[{"role": "user", "content": prompt}]
     )
-    return completion["choices"][0]["message"]["content"]
+    return completion.choices[0].message.content
   
   except: 
-    print ("ChatGPT ERROR")
-    return "ChatGPT ERROR"
+    print ("Mixtral ERROR")
+    return "Mixtral ERROR"
 
 
 def ChatGPT_request(prompt): 
@@ -70,15 +78,19 @@ def ChatGPT_request(prompt):
   """
   # temp_sleep()
   try: 
-    completion = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo", 
-    messages=[{"role": "user", "content": prompt}]
+    client = openai.OpenAI(
+      api_key,
+      base_url="https://api.together.xyz/v1",
+      )
+    completion = client.chat.completions.create(
+      model="Qwen/Qwen1.5-72B-Chat", 
+      messages=[{"role": "user", "content": prompt}]
     )
-    return completion["choices"][0]["message"]["content"]
+    return completion.choices[0].message.content
   
   except: 
-    print ("ChatGPT ERROR")
-    return "ChatGPT ERROR"
+    print ("Qwen ERROR")
+    return "Qwen ERROR"
 
 
 def GPT4_safe_generate_response(prompt, 
@@ -101,7 +113,7 @@ def GPT4_safe_generate_response(prompt,
   for i in range(repeat): 
 
     try: 
-      curr_gpt_response = GPT4_request(prompt).strip()
+      curr_gpt_response = Mistral_request(prompt).strip()
       end_index = curr_gpt_response.rfind('}') + 1
       curr_gpt_response = curr_gpt_response[:end_index]
       curr_gpt_response = json.loads(curr_gpt_response)["output"]
@@ -191,12 +203,12 @@ def ChatGPT_safe_generate_response_OLD(prompt,
 
 
 # ============================================================================
-# ###################[SECTION 2: ORIGINAL GPT-3 STRUCTURE] ###################
+# ###################[SECTION 2: ORIGINAL Qwen STRUCTURE] ###################
 # ============================================================================
 
 def GPT_request(prompt, gpt_parameter): 
   """
-  Given a prompt and a dictionary of GPT parameters, make a request to OpenAI
+  Given a prompt and a dictionary of GPT parameters, make a request to together
   server and returns the response. 
   ARGS:
     prompt: a str prompt
@@ -204,11 +216,15 @@ def GPT_request(prompt, gpt_parameter):
                    the parameter and the values indicating the parameter 
                    values.   
   RETURNS: 
-    a str of GPT-3's response. 
+    a str of Qwen's response. 
   """
   temp_sleep()
   try: 
-    response = openai.Completion.create(
+    client = openai.OpenAI(
+      api_key,
+      base_url="https://api.together.xyz/v1",
+    )
+    response = client.chat.completions.create(
                 model=gpt_parameter["engine"],
                 prompt=prompt,
                 temperature=gpt_parameter["temperature"],
@@ -273,16 +289,22 @@ def safe_generate_response(prompt,
   return fail_safe_response
 
 
-def get_embedding(text, model="text-embedding-ada-002"):
-  text = text.replace("\n", " ")
-  if not text: 
-    text = "this is blank"
-  return openai.Embedding.create(
-          input=[text], model=model)['data'][0]['embedding']
+def get_embedding(texts, model="togethercomputer/m2-bert-80M-32k-retrieval"):
+   # Ensure texts is a list
+   if isinstance(texts, str):
+       texts = [texts]
+   # Replace newline characters in all texts
+   texts = [text.replace("\n", " ") for text in texts]
+   # Create API client
+   client = OpenAI(api_key=TOGETHER_API_KEY, base_url="https://api.together.xyz/v1")
+   # Create embeddings for all texts in one API call
+   outputs = client.embeddings.create(input=texts, model=model)
+   # Return list of embeddings
+   return [outputs.data[i].embedding for i in range(len(texts))][0]
 
 
 if __name__ == '__main__':
-  gpt_parameter = {"engine": "text-davinci-003", "max_tokens": 50, 
+  gpt_parameter = {"engine": "Qwen/Qwen1.5-72B-Chat", "max_tokens": 50, 
                    "temperature": 0, "top_p": 1, "stream": False,
                    "frequency_penalty": 0, "presence_penalty": 0, 
                    "stop": ['"']}
@@ -309,18 +331,6 @@ if __name__ == '__main__':
                                  True)
 
   print (output)
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
