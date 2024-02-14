@@ -7,7 +7,6 @@ Description: Wrapper functions for calling OpenAI APIs.
 import json
 import random
 import openai
-from openai import OpenAI
 import time 
 
 from utils import *
@@ -297,7 +296,7 @@ def get_embedding(texts, model="togethercomputer/m2-bert-80M-32k-retrieval"):
    # Replace newline characters in all texts
    texts = [text.replace("\n", " ") for text in texts]
    # Create API client
-   client = openai.OpenAI(api_key=TOGETHER_API_KEY, base_url="https://api.together.xyz/v1")
+   client = openai.OpenAI(api_key, base_url="https://api.together.xyz/v1")
    # Create embeddings for all texts in one API call
    outputs = client.embeddings.create(input=texts, model=model)
    # Return list of embeddings
