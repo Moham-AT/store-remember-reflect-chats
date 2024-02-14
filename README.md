@@ -15,7 +15,7 @@ To set up your environment, you will need to generate a `utils.py` file that con
 In the `reverie/backend_server` folder (where `reverie.py` is located), create a new file titled `utils.py` and copy and paste the content below into the file:
 ```
 # Copy and paste your OpenAI API Key
-openai_api_key = "<Your OpenAI API>"
+together_api_key = "<Your Together OpenAI API>"
 # Put your name
 key_owner = "<Name>"
 
