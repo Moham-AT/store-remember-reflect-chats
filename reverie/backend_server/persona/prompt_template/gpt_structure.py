@@ -7,11 +7,13 @@ Description: Wrapper functions for calling OpenAI APIs.
 import json
 import random
 import openai
-import time 
+import time
+import voyageai
 
 import utils
 
 api_key = utils.TOGETHER_API_KEY
+voyage_api = utils.VOGAGE_API
 
 def temp_sleep(seconds=0.1):
   time.sleep(seconds)
@@ -289,18 +291,17 @@ def safe_generate_response(prompt,
   return fail_safe_response
 
 
-def get_embedding(texts, model="togethercomputer/m2-bert-80M-32k-retrieval"):
+def get_embedding(texts, voyage_api, model="voyage-large-2"):
    # Ensure texts is a list
    if isinstance(texts, str):
        texts = [texts]
    # Replace newline characters in all texts
    texts = [text.replace("\n", " ") for text in texts]
-   # Create API client
-   client = openai.OpenAI(api_key, base_url="https://api.together.xyz/v1")
-   # Create embeddings for all texts in one API call
-   outputs = client.embeddings.create(input=texts, model=model)
-   # Return list of embeddings
-   return [outputs.data[i].embedding for i in range(len(texts))][0]
+
+   vo = voyageai.Client(api_key=voyage_api)
+   result = vo.embed(texts, model=model, input_type="document")
+
+   return result.embeddings[0]
 
 
 if __name__ == '__main__':
