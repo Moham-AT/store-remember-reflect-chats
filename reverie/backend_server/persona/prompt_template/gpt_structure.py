@@ -228,7 +228,7 @@ def GPT_request(prompt, gpt_parameter):
     )
     response = client.chat.completions.create(
                 model=gpt_parameter["engine"],
-                prompt=prompt,
+                messages=[prompt],
                 temperature=gpt_parameter["temperature"],
                 max_tokens=gpt_parameter["max_tokens"],
                 top_p=gpt_parameter["top_p"],
