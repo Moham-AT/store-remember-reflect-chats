@@ -22,8 +22,8 @@ def ChatGPT_single_request(prompt):
   temp_sleep()
   
   client = openai.OpenAI(
-    api_key,
-    base_url="https://api.together.xyz/v1",
+    api_key=api_key,
+    base_url="https://api.together.xyz/v1"
     )
   completion = client.chat.completions.create(
     model="Qwen/Qwen1.5-72B-Chat", 
@@ -52,8 +52,8 @@ def Mistral_request(prompt):
 
   try: 
     client = openai.OpenAI(
-      api_key,
-      base_url="https://api.together.xyz/v1",
+      api_key=api_key,
+      base_url="https://api.together.xyz/v1"
       )
     completion = client.chat.completions.create(
       model="mistralai/Mixtral-8x7B-Instruct-v0.1", 
@@ -81,8 +81,8 @@ def ChatGPT_request(prompt):
   # temp_sleep()
   try: 
     client = openai.OpenAI(
-      api_key,
-      base_url="https://api.together.xyz/v1",
+      api_key=api_key,
+      base_url="https://api.together.xyz/v1"
       )
     completion = client.chat.completions.create(
       model="Qwen/Qwen1.5-72B-Chat", 
@@ -224,7 +224,7 @@ def GPT_request(prompt, gpt_parameter):
   try: 
     client = openai.OpenAI(
       api_key=api_key,
-      base_url="https://api.together.xyz/v1",
+      base_url="https://api.together.xyz/v1"
     )
     response = client.chat.completions.create(
                 model=gpt_parameter["engine"],
