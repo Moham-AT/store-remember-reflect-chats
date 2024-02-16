@@ -291,13 +291,12 @@ def safe_generate_response(prompt,
   return fail_safe_response
 
 
-def get_embedding(texts, voyage_api, model="voyage-large-2"):
+def get_embedding(texts, model="voyage-large-2"):
    # Ensure texts is a list
    if isinstance(texts, str):
        texts = [texts]
    # Replace newline characters in all texts
    texts = [text.replace("\n", " ") for text in texts]
-
    vo = voyageai.Client(api_key=voyage_api)
    result = vo.embed(texts, model=model, input_type="document")
 
