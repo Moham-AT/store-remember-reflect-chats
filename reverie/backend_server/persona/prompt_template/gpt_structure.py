@@ -223,7 +223,7 @@ def GPT_request(prompt, gpt_parameter):
   temp_sleep()
   try: 
     client = openai.OpenAI(
-      api_key,
+      api_key=api_key,
       base_url="https://api.together.xyz/v1",
     )
     response = client.chat.completions.create(
@@ -236,7 +236,7 @@ def GPT_request(prompt, gpt_parameter):
                 presence_penalty=gpt_parameter["presence_penalty"],
                 stream=gpt_parameter["stream"],
                 stop=gpt_parameter["stop"],)
-    return response.choices[0].text
+    return response.choices[0].message.content
   except: 
     print ("TOKEN LIMIT EXCEEDED")
     return "TOKEN LIMIT EXCEEDED"
